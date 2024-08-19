@@ -11,6 +11,7 @@ const {
   updatePassword,
   verifyPasswordResetCode,
   signInWithPhoneNumber,
+  updateProfile,
 } = require('firebase/auth');
 
 const firebaseConfig = {
@@ -24,12 +25,16 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+const auth = getAuth(app);
 
 function AuthFunc() {
-  this.signup = (email, password) => {
+  this.signup = (email, password, name, image) => {
     let data = createUserWithEmailAndPassword(auth, email, password);
     return data;
+  };
+
+  this.activeUser = () => {
+    return auth.currentUser;
   };
 
   this.login = (email, password) => {
@@ -46,6 +51,13 @@ function AuthFunc() {
   };
   this.phone = (number, otp) => {
     const res = signInWithPhoneNumber(auth, number, otp);
+    return res;
+  };
+  this.profile = (name, image) => {
+    const res = updateProfile(auth.currentUser, {
+      displayName: name,
+      photoURL: image,
+    });
     return res;
   };
 
