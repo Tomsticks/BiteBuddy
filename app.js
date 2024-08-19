@@ -4,8 +4,14 @@ const authRoute = require('./auth/router');
 const userRoute = require('./users/router');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 app.use(bodyParser.json());
+app.use(
+  cors({
+    credentials: true,
+  })
+);
 app.use(morgan('tiny'));
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
