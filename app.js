@@ -14,6 +14,9 @@ app.use(
     credentials: true,
   })
 );
+app.get('/awake', (req, res) => {
+  res.send('Keep hosting awake');
+});
 app.use(morgan('tiny'));
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);

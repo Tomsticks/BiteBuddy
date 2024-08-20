@@ -34,6 +34,9 @@ exports.register = catchAsync(async (req, res) => {
 
 exports.login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Please fill in all fields' });
+  }
   try {
     const user = await auth.login(email, password);
     if (!user) {
@@ -44,7 +47,7 @@ exports.login = catchAsync(async (req, res) => {
       uid: user.user.uid,
     });
     res.status(201).json({
-      user: user,
+      user: userData,
       status: 'Sucess',
     });
   } catch (error) {
@@ -104,6 +107,8 @@ exports.updateUserPassword = catchAsync(async (req, res, next) => {
     res.send(error);
   }
 });
+
+// exports.
 
 exports.logOut = catchAsync(async (req, res, next) => {
   const logOut = await auth.signout();
