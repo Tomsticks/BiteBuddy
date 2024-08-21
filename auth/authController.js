@@ -14,44 +14,43 @@ exports.register = catchAsync(async (req, res) => {
     const user = await auth.signup(email, password, name);
     // const token = await user.user.getIdToken(true);
     const uid = user.user.uid;
-    if (user) {
-      const newUser = await users.create({
-        name: name,
-        email: email,
-        uid: uid,
-        phoneNumber: number,
-        username: username,
-      });
-    }
 
-    res.send(user);
+    const newUser = await users.create({
+      name: name,
+      email: email,
+      uid: uid,
+      phoneNumber: number,
+      username: username,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user: newUser,
+      },
+    });
   } catch (error) {
     res.status(400).json({
-      error,
+      code: error.code,
+      message: error.message,
     });
   }
 });
 
 exports.login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Please fill in all fields' });
-  }
   try {
     const user = await auth.login(email, password);
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-
     const userData = await users.find({
       uid: user.user.uid,
     });
+    const token = await user.user.getIdToken();
     res.status(201).json({
       user: userData,
+      token: token,
       status: 'Sucess',
     });
   } catch (error) {
-    res.send(error);
+    return res.status(400).json({ error });
   }
 });
 
@@ -67,15 +66,24 @@ exports.login = catchAsync(async (req, res) => {
 
 exports.isLogged = catchAsync(async (req, res, next) => {
   const user = await auth.activeUser();
+
   if (!user) {
     req.currentUser = null;
     next(res.status(401).json({ message: 'You are not logged in' }));
   }
+  const token = await user.getIdToken(
+    false, // allowRefresh
+    3600 // expiresIn
+  );
 
   const userData = await users.find({
     uid: user.uid,
   });
-  req.currentUser = userData;
+  let activeUser = {
+    user: userData,
+    token: token,
+  };
+  req.currentUser = activeUser;
 
   next();
 });
