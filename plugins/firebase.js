@@ -15,7 +15,7 @@ const {
 } = require('firebase/auth');
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBkdaYfNnbNjZeTXkFNmdTINAN7x5BVwZE',
+  apiKey: process.env.FIREBASE_API_KEY,
   authDomain: 'bitebuddy-fd181.firebaseapp.com',
   projectId: 'bitebuddy-fd181',
   storageBucket: 'bitebuddy-fd181.appspot.com',
