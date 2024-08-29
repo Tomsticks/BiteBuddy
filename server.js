@@ -9,9 +9,7 @@ process.on('uncaughtException', (err) => {
 });
 
 mongoose
-  .connect(
-    'mongodb+srv://tscript:mira247a@tomzor.axomd8j.mongodb.net/bitebuddy'
-  )
+  .connect(process.env.DATABASE)
   .then(() => {
     console.log('database Connected');
   })
