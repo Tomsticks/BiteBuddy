@@ -71,10 +71,10 @@ exports.isLogged = catchAsync(async (req, res, next) => {
     req.currentUser = null;
     return next(res.status(401).json({ message: 'You are not logged in' }));
   }
-  // const token = await user.getIdToken(
-  //   false, // allowRefresh
-  //   3600 // expiresIn
-  // );
+  const token = await user.getIdToken(
+    false, // allowRefresh
+    3600 // expiresIn
+  );
 
   const userData = await users.find({
     uid: user.uid,
